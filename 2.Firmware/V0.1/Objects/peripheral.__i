@@ -1,0 +1,1 @@
+"Code\peripheral.c" ROM(COMPACT) OPTIMIZE (8,SPEED) BROWSE INCDIR(.\Code) DEBUG OBJECTEXTEND PRINT(.\Listings\peripheral.lst) OBJECT(.\Objects\peripheral.obj)

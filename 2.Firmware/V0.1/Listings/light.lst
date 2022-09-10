@@ -1,0 +1,149 @@
+C51 COMPILER V9.60.0.0   LIGHT                                                             09/01/2022 23:50:08 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE LIGHT
+OBJECT MODULE PLACED IN .\Objects\light.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Code\light.c ROM(COMPACT) OPTIMIZE(8,SPEED) BROWSE INCDIR(.\Code) DEBUG 
+                    -OBJECTEXTEND PRINT(.\Listings\light.lst) OBJECT(.\Objects\light.obj)
+
+line level    source
+
+   1          #include "light.h"
+   2          #include "stc8gxx.h"
+   3          
+   4          //LED
+   5          #define CLK P10
+   6          #define SDI P13
+   7          #define LE  P12
+   8          #define OE  P11
+   9          
+  10          unsigned short led_last_number = 0x0000;
+  11          
+  12          void _Delay10us()               //@12.000MHz
+  13          {
+  14   1              unsigned char i;
+  15   1      
+  16   1              i = 38;
+  17   1              while (--i);
+  18   1      }
+  19          
+  20          void _Delay1ms()                //@12.000MHz
+  21          {
+  22   1              unsigned char i, j;
+  23   1      
+  24   1              i = 16;
+  25   1              j = 147;
+  26   1              do
+  27   1              {
+  28   2                      while (--j);
+  29   2              } while (--i);
+  30   1      }
+  31          
+  32          void _delay_ms(int number) 
+  33          {
+  34   1          while(number--)
+  35   1          {
+  36   2             _Delay1ms(); 
+  37   2          }
+  38   1      }
+  39          
+  40          void light_init(void)
+  41          {
+  42   1          // P1.0 => CLK  上升沿
+  43   1              // P1.1 => OE   低电平，启动LED输出
+  44   1              // P1.2 => LE   高电平，串行数据传入输入锁存器
+  45   1              // P1.3 => SDI  串行输入
+  46   1          //设置 为双向口模式
+  47   1          P1M0 &= 0xF0;       // xxxx OOOO  
+  48   1          P1M1 &= 0xF0;
+  49   1      }
+  50          
+  51          void light_off(void)
+  52          {
+  53   1          OE = 1;
+  54   1      }
+C51 COMPILER V9.60.0.0   LIGHT                                                             09/01/2022 23:50:08 PAGE 2   
+
+  55          
+  56          void light_on(void)
+  57          {
+  58   1          OE = 0;
+  59   1      }
+  60          
+  61          void light(unsigned short number) 
+  62          {       
+  63   1              // P1.0 => CLK  上升沿
+  64   1              // P1.1 => OE   低电平，启动LED输出
+  65   1              // P1.2 => LE   高电平，串行数据传入输入锁存器
+  66   1              // P1.3 => SDI  串行输入
+  67   1          char i, j;
+  68   1          
+  69   1          if(number == 0x0000)
+  70   1          {
+  71   2              light_off();     //关闭输出
+  72   2              return;
+  73   2          }
+  74   1          
+  75   1          led_last_number = number;
+  76   1          CLK = 0;
+  77   1              OE = 1;
+  78   1              LE = 1;
+  79   1          _Delay10us();
+  80   1          for (i = 0; i < 16; ++i)
+  81   1          {
+  82   2              SDI = number & 0x8000;
+  83   2              CLK = 1;
+  84   2              _Delay10us();
+  85   2              
+  86   2              CLK = 0;
+  87   2              number <<= 1;
+  88   2              _Delay10us();
+  89   2          }
+  90   1              OE = 0;
+  91   1          LE = 0;     
+  92   1      }
+*** WARNING C280 IN LINE 67 OF Code\light.c: 'j': unreferenced local variable
+  93          
+  94          unsigned short light_get_last_number(void)
+  95          {
+  96   1          return led_last_number; 
+  97   1      }
+  98          
+  99          void light_reset_last_number(void)
+ 100          {
+ 101   1          led_last_number = 0x0000;
+ 102   1      }
+ 103          
+ 104          void light_running(enum LIGHT _switch)
+ 105          {
+ 106   1          char i;
+ 107   1          unsigned short number = 0;
+ 108   1          if (_switch == TURN_OFF)
+ 109   1              number = 0xFFFF;
+ 110   1          for (i = 0; i < 16; ++i)
+ 111   1          {
+ 112   2              if (_switch == TURN_ON)
+ 113   2                  number |= 0x0001 << i;
+ 114   2              else
+ 115   2                  number &= 0x7FFF << i;
+C51 COMPILER V9.60.0.0   LIGHT                                                             09/01/2022 23:50:08 PAGE 3   
+
+ 116   2              light(number);
+ 117   2              _delay_ms(100);
+ 118   2          }
+ 119   1      }
+ 120          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    229    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

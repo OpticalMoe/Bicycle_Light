@@ -1,0 +1,86 @@
+C51 COMPILER V9.60.0.0   ADC                                                               09/01/2022 23:31:48 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE ADC
+OBJECT MODULE PLACED IN .\Objects\adc.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Code\adc.c ROM(COMPACT) OPTIMIZE(8,SPEED) BROWSE INCDIR(.\Code) DEBUG OB
+                    -JECTEXTEND PRINT(.\Listings\adc.lst) OBJECT(.\Objects\adc.obj)
+
+line level    source
+
+   1          #include "adc.h"
+   2          #include "stc8gxx.h"
+   3          #include <intrins.h>
+   4          #include <stdio.h>
+   5          
+   6          //#define ENV_LIGHT_1 P15 //ADC5
+   7          //#define ENV_LIGHT_2 P16 //ADC6
+   8          
+   9          int *BGV;   //内部1.19V参考信号源值存放在idata中
+  10                      //idata的EFH地址存放高字节
+  11                      //idata的F0H地址存放低字节
+  12                      //电压单位为毫伏(mV)
+  13                      
+  14          enum ENV env;
+  15          enum BATTERY battery;
+  16          
+  17          unsigned int battery_voltage = 0;
+  18                      
+  19          void adc_init(void)
+  20          {
+  21   1          BGV = (int idata *)0xef;
+  22   1          P1M0 &= 0x9F;       // P1.5 & P1.6
+  23   1          P1M1 |= 0x60;
+  24   1          P_SW2 |= 0x80;
+  25   1          ADCTIM = 0x3f;                              //设置ADC内部时序
+  26   1          P_SW2 &= 0x7f;
+  27   1          ADCCFG = 0x2f;                              // 右对齐，设置ADC时钟为系统时钟/2/16
+  28   1          ADC_CONTR = 0x80;                           //使能ADC模块
+  29   1      }
+  30          
+  31          int adc_get_voltage(enum ADC_CHS adc_chs)
+  32          {    
+  33   1          ADC_CONTR &= 0xF0;    
+  34   1          ADC_CONTR |= 0x0F;                      // ADC内部基准源1.19V
+  35   1          ADC_CONTR |= 0x40;                      //启动AD转换
+  36   1          _nop_();
+  37   1          _nop_();
+  38   1          while (!(ADC_CONTR & 0x20));            //查询ADC完成标志
+  39   1          ADC_CONTR &= ~0x20;                     //清完成标志
+  40   1          battery_voltage = (int)(1024L * *BGV / ((ADC_RES << 8) | ADC_RESL));
+  41   1          if (adc_chs == ADC_1_19)
+  42   1              return battery_voltage;
+  43   1          
+  44   1          //ADC
+  45   1          ADC_CONTR &= 0xF0;   
+  46   1          ADC_CONTR |= adc_chs;
+  47   1          ADC_CONTR |= 0x40;                      //启动AD转换
+  48   1          _nop_();
+  49   1          _nop_();
+  50   1          while (!(ADC_CONTR & 0x20));            //查询ADC完成标志
+  51   1          ADC_CONTR &= ~0x20;                     //清完成标志
+  52   1          return (int)(battery_voltage / 1024L * ((ADC_RES << 8) | ADC_RESL));
+  53   1      }
+  54          
+C51 COMPILER V9.60.0.0   ADC                                                               09/01/2022 23:31:48 PAGE 2   
+
+  55          int adc_get_battery_electricity()
+  56          {
+  57   1          adc_get_voltage(ADC_1_19);
+  58   1          return (int)((battery_voltage - 3000) * 100.0 / 1200 + 0.5);     // 3V截止    
+  59   1      }
+  60          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    236    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      7       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,1 @@
+"Code\adc.c" ROM(COMPACT) OPTIMIZE (8,SPEED) BROWSE INCDIR(.\Code) DEBUG OBJECTEXTEND PRINT(.\Listings\adc.lst) OBJECT(.\Objects\adc.obj)

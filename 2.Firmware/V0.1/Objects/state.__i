@@ -1,0 +1,1 @@
+"Code\state.c" ROM(COMPACT) OPTIMIZE (8,SPEED) BROWSE INCDIR(.\Code) DEBUG OBJECTEXTEND PRINT(.\Listings\state.lst) OBJECT(.\Objects\state.obj)

@@ -1,0 +1,8 @@
+".\Objects\STARTUP.obj",
+".\Objects\light.obj",
+".\Objects\main.obj",
+".\Objects\adc.obj",
+".\Objects\peripheral.obj",
+".\Objects\state.obj" 
+TO ".\Objects\TailLight" 
+PRINT(".\Listings\TailLight.m51") RAMSIZE(256) 

@@ -1,0 +1,138 @@
+C51 COMPILER V9.60.0.0   STATE                                                             09/02/2022 00:01:18 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE STATE
+OBJECT MODULE PLACED IN .\Objects\state.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Code\state.c ROM(COMPACT) OPTIMIZE(8,SPEED) BROWSE INCDIR(.\Code) DEBUG 
+                    -OBJECTEXTEND PRINT(.\Listings\state.lst) OBJECT(.\Objects\state.obj)
+
+line level    source
+
+   1          #include "state.h"
+   2          #include "stc8gxx.h"
+   3          
+   4          long boot_time = 0;             // max 24day
+   5          
+   6          long shutdown_countdown = 0;            // 关机倒计时
+   7          const int shutdown_time_out = 20 * 1000;    // 关机时间
+   8          
+   9          int break_countdown = 0;                //刹车灯亮灯倒计时
+  10          const int break_time_out = 3 * 1000;
+  11          
+  12          int battery_countdown = 0;              //电池电量显示 倒计时
+  13          const int battery_time_out = 8 * 1000;  //电池电量显示 时长
+  14          
+  15          char flag = 0;
+  16          
+  17          void TIM0_Isr() interrupt 1
+  18          {
+  19   1          ++boot_time;
+  20   1          if (shutdown_countdown > 0)
+  21   1              --shutdown_countdown;
+  22   1          else 
+  23   1          {
+  24   2              power = SLEEP;   
+  25   2      //        LED_G = 0;       
+  26   2          }
+  27   1          
+  28   1          flag = (flag << 1) | (KEY_RIGHT);
+  29   1          if ((flag & 0x03) == 0x02)
+  30   1          {
+  31   2              battery = BAT;
+  32   2              time_reset_battery();
+  33   2          }
+  34   1          if (battery_countdown > 0)
+  35   1              --battery_countdown;
+  36   1          
+  37   1          if (CONCUSSION_BREAK == 0)
+  38   1              time_reset_break();
+  39   1          if (break_countdown > 0)
+  40   1              --break_countdown;    
+  41   1      }
+  42          
+  43          long time_get_boot_time()
+  44          {
+  45   1          return boot_time;
+  46   1      }
+  47          
+  48          long time_get_shutdown()
+  49          {
+  50   1          return shutdown_countdown;
+  51   1      }
+  52          
+  53          int time_get_break()
+  54          {
+C51 COMPILER V9.60.0.0   STATE                                                             09/02/2022 00:01:18 PAGE 2   
+
+  55   1          return break_countdown;
+  56   1      }
+  57          
+  58          int time_get_battery()
+  59          {
+  60   1          return battery_countdown;
+  61   1      }
+  62          
+  63          //
+  64          void time_reset_shutdown()
+  65          {
+  66   1          shutdown_countdown = shutdown_time_out;
+  67   1      }
+  68          
+  69          void time_reset_break()
+  70          {
+  71   1          break_countdown = break_time_out;
+  72   1      }
+  73          
+  74          void time_break_zero()
+  75          {
+  76   1          break_countdown = 0;
+  77   1      }
+  78          
+  79          void time_reset_battery()
+  80          {
+  81   1          battery_countdown = battery_time_out;
+  82   1      }
+  83          
+  84          
+  85          // 定时器1被串口0占用
+  86          
+  87          
+  88          void timer_init(void)
+  89          {    
+  90   1          reset_state();
+  91   1          boot_time = 0;             // max 24day
+  92   1          time_reset_shutdown();
+  93   1          time_reset_break();
+  94   1          
+  95   1          // 1ms
+  96   1      //    AUXR |= 0x04;             //定时器时钟1T模式
+  97   1      //      T2L = 0x20;                 //设置定时初始值
+  98   1      //      T2H = 0xD1;                 //设置定时初始值
+  99   1      //      AUXR |= 0x10;           //定时器2开始计时 
+ 100   1      //    IE2 = 0x04;         //使能定时器中断  
+ 101   1          
+ 102   1          AUXR |= 0x80;   //定时器时钟1T模式
+ 103   1              TMOD &= 0xF0;   //设置定时器模式
+ 104   1              TMOD |= 0x03;   //设置定时器模式
+ 105   1              TL0 = 0x20;             //设置定时初始值
+ 106   1              TH0 = 0xD1;             //设置定时初始值
+ 107   1              TF0 = 0;                //清除TF0标志
+ 108   1              TR0 = 1;                //定时器0开始计时
+ 109   1          ET0 = 1;        //使能定时器中断
+ 110   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    305    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+C51 COMPILER V9.60.0.0   STATE                                                             09/02/2022 00:01:18 PAGE 3   
+
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     19    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
