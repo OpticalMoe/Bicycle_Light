@@ -1,3 +1,14 @@
+/*!
+ * @file        peripheral.h
+ * @brief       
+ * @copyright   Copyright (c) 2022 ChenYuanliang
+ * @licence     CC-BY-NC-SA 3.0，知识共享许可协议-署名-非商业使用-相同方式共享。
+ * @author      ChenYuanliang
+ * @version     V1.0
+ * @date        2022-09-01
+ * @url         https://github.com/OpticalMoe
+ */
+ 
 #ifndef __PERIPHERAL_H__
 #define __PERIPHERAL_H__
 
@@ -12,8 +23,8 @@ extern enum POWER power;
 
 //enum BIKE
 //{
-//    BREAK = 0,      // ɲ��
-//    DRIVING    // �г�
+//    BREAK = 0,      // ɲ��
+//    DRIVING    // �г�
 //};
 
 //extern enum BIKE bike;

@@ -1,3 +1,14 @@
+/*!
+ * @file        adc.h
+ * @brief       adc
+ * @copyright   Copyright (c) 2022 ChenYuanliang
+ * @licence     CC-BY-NC-SA 3.0ï¼ŒçŸ¥è¯†å…±äº«è®¸å¯åè®®-ç½²å-éå•†ä¸šä½¿ç”¨-ç›¸åŒæ–¹å¼å…±äº«ã€‚
+ * @author      ChenYuanliang
+ * @version     V1.0
+ * @date        2022-09-01
+ * @url         https://github.com/OpticalMoe
+ */
+ 
 #ifndef __ADC_H__
 #define __ADC_H__
 
@@ -23,9 +34,9 @@ enum ADC_CHS
 
 enum ENV
 {
-    DAYTIME ,   // °×Ìì ²»ÁÁµÆ
-    EVENING ,   // °øÍí
-    NIGHT       // Ò¹Àï
+    DAYTIME ,   // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    EVENING ,   // ï¿½ï¿½ï¿½ï¿½
+    NIGHT       // Ò¹ï¿½ï¿½
 };
 extern enum ENV env;
 

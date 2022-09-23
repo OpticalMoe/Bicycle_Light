@@ -1,3 +1,14 @@
+/*!
+ * @file        main.c
+ * @brief       
+ * @copyright   Copyright (c) 2022 ChenYuanliang
+ * @licence     CC-BY-NC-SA 3.0ï¼ŒçŸ¥è¯†å…±äº«è®¸å¯åè®®-ç½²å-éå•†ä¸šä½¿ç”¨-ç›¸åŒæ–¹å¼å…±äº«ã€‚
+ * @author      ChenYuanliang
+ * @version     V1.0
+ * @date        2022-09-01
+ * @url         https://github.com/OpticalMoe
+ */
+ 
 #include "stc8gxx.h"
 #include <stdio.h>
 #include <intrins.h>
@@ -82,7 +93,7 @@ void main()
         }
         else        //RUN
         {
-            if (time_get_break() > 0) //É²³µ
+            if (time_get_break() > 0) //É²ï¿½ï¿½
             {
                 printf("Break\r\n");
                 if (time_get_break() % 500 < 250)
@@ -90,9 +101,9 @@ void main()
                 else                    
                     light(0x0000);
             }
-            else if(time_get_battery() > 0)     // µçÁ¿ÏÔÊ¾
+            else if(time_get_battery() > 0)     // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾
             {
-                if(battery == BAT)  // »ñÈ¡µçÁ¿
+                if(battery == BAT)  // ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½
                 {
                     battery = NO;
                     light(0x0000);
@@ -112,7 +123,7 @@ void main()
                     }
                     temp = 0;
                 }
-                else if (time_get_battery() % 500 == 0)    // ÏÔÊ¾
+                else if (time_get_battery() % 500 == 0)    // ï¿½ï¿½Ê¾
                 {
                     ++temp;
                     light(light_get_last_number() | (battery_light & (0x0001 << temp)));

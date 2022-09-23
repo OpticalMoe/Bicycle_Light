@@ -1,3 +1,14 @@
+/*!
+ * @file        adc.c
+ * @brief       adc
+ * @copyright   Copyright (c) 2022 ChenYuanliang
+ * @licence     CC-BY-NC-SA 3.0ï¼ŒçŸ¥è¯†å…±äº«è®¸å¯åè®®-ç½²å-éå•†ä¸šä½¿ç”¨-ç›¸åŒæ–¹å¼å…±äº«ã€‚
+ * @author      ChenYuanliang
+ * @version     V1.0
+ * @date        2022-09-01
+ * @url         https://github.com/OpticalMoe
+ */
+ 
 #include "adc.h"
 #include "stc8gxx.h"
 #include <intrins.h>
@@ -6,10 +17,10 @@
 //#define ENV_LIGHT_1 P15 //ADC5
 //#define ENV_LIGHT_2 P16 //ADC6
 
-int *BGV;   //ÄÚ²¿1.19V²Î¿¼ĞÅºÅÔ´Öµ´æ·ÅÔÚidataÖĞ
-            //idataµÄEFHµØÖ·´æ·Å¸ß×Ö½Ú
-            //idataµÄF0HµØÖ·´æ·ÅµÍ×Ö½Ú
-            //µçÑ¹µ¥Î»ÎªºÁ·ü(mV)
+int *BGV;   //ï¿½Ú²ï¿½1.19Vï¿½Î¿ï¿½ï¿½Åºï¿½Ô´Öµï¿½ï¿½ï¿½ï¿½ï¿½idataï¿½ï¿½
+            //idataï¿½ï¿½EFHï¿½ï¿½Ö·ï¿½ï¿½Å¸ï¿½ï¿½Ö½ï¿½
+            //idataï¿½ï¿½F0Hï¿½ï¿½Ö·ï¿½ï¿½Åµï¿½ï¿½Ö½ï¿½
+            //ï¿½ï¿½Ñ¹ï¿½ï¿½Î»Îªï¿½ï¿½ï¿½ï¿½(mV)
             
 enum ENV env;
 enum BATTERY battery;
@@ -22,21 +33,21 @@ void adc_init(void)
     P1M0 &= 0x9F;	// P1.5 & P1.6
     P1M1 |= 0x60;
     P_SW2 |= 0x80;
-    ADCTIM = 0x3f;                              //ÉèÖÃADCÄÚ²¿Ê±Ğò
+    ADCTIM = 0x3f;                              //ï¿½ï¿½ï¿½ï¿½ADCï¿½Ú²ï¿½Ê±ï¿½ï¿½
     P_SW2 &= 0x7f;
-    ADCCFG = 0x2f;                              // ÓÒ¶ÔÆë£¬ÉèÖÃADCÊ±ÖÓÎªÏµÍ³Ê±ÖÓ/2/16
-    ADC_CONTR = 0x80;                           //Ê¹ÄÜADCÄ£¿é
+    ADCCFG = 0x2f;                              // ï¿½Ò¶ï¿½ï¿½ë£¬ï¿½ï¿½ï¿½ï¿½ADCÊ±ï¿½ï¿½ÎªÏµÍ³Ê±ï¿½ï¿½/2/16
+    ADC_CONTR = 0x80;                           //Ê¹ï¿½ï¿½ADCÄ£ï¿½ï¿½
 }
 
 int adc_get_voltage(enum ADC_CHS adc_chs)
 {    
     ADC_CONTR &= 0xF0;    
-    ADC_CONTR |= 0x0F;                      // ADCÄÚ²¿»ù×¼Ô´1.19V
-    ADC_CONTR |= 0x40;                      //Æô¶¯AD×ª»»
+    ADC_CONTR |= 0x0F;                      // ADCï¿½Ú²ï¿½ï¿½ï¿½×¼Ô´1.19V
+    ADC_CONTR |= 0x40;                      //ï¿½ï¿½ï¿½ï¿½AD×ªï¿½ï¿½
     _nop_();
     _nop_();
-    while (!(ADC_CONTR & 0x20));            //²éÑ¯ADCÍê³É±êÖ¾
-    ADC_CONTR &= ~0x20;                     //ÇåÍê³É±êÖ¾
+    while (!(ADC_CONTR & 0x20));            //ï¿½ï¿½Ñ¯ADCï¿½ï¿½É±ï¿½Ö¾
+    ADC_CONTR &= ~0x20;                     //ï¿½ï¿½ï¿½ï¿½É±ï¿½Ö¾
     battery_voltage = (int)(1024L * *BGV / ((ADC_RES << 8) | ADC_RESL));
     if (adc_chs == ADC_1_19)
         return battery_voltage;
@@ -44,17 +55,17 @@ int adc_get_voltage(enum ADC_CHS adc_chs)
     //ADC
     ADC_CONTR &= 0xF0;   
     ADC_CONTR |= adc_chs;
-    ADC_CONTR |= 0x40;                      //Æô¶¯AD×ª»»
+    ADC_CONTR |= 0x40;                      //ï¿½ï¿½ï¿½ï¿½AD×ªï¿½ï¿½
     _nop_();
     _nop_();
-    while (!(ADC_CONTR & 0x20));            //²éÑ¯ADCÍê³É±êÖ¾
-    ADC_CONTR &= ~0x20;                     //ÇåÍê³É±êÖ¾
+    while (!(ADC_CONTR & 0x20));            //ï¿½ï¿½Ñ¯ADCï¿½ï¿½É±ï¿½Ö¾
+    ADC_CONTR &= ~0x20;                     //ï¿½ï¿½ï¿½ï¿½É±ï¿½Ö¾
     return (int)(battery_voltage / 1024L * ((ADC_RES << 8) | ADC_RESL));
 }
 
 int adc_get_battery_electricity()
 {
     adc_get_voltage(ADC_1_19);
-    return (int)((battery_voltage - 3000) * 100.0 / 1200 + 0.5);     // 3V½ØÖ¹    
+    return (int)((battery_voltage - 3000) * 100.0 / 1200 + 0.5);     // 3Vï¿½ï¿½Ö¹    
 }
 
